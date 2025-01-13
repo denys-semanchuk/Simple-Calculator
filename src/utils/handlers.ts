@@ -2,6 +2,7 @@ import React from "react";
 import { CalcState, CalcHandler } from "../types/calcTypes.ts";
 import { removeSpaces, toLocaleString } from "./calculatorHandlers.ts";
 import { keyboardMap } from "./keyboardMap.ts";
+import { ErrorType } from "../types/errTypes.ts";
 
 const backspaceHandler: CalcHandler = (calc, setCalc) => {
   if (calc.num !== 0) {
@@ -16,9 +17,9 @@ const backspaceHandler: CalcHandler = (calc, setCalc) => {
 const numClickHandler = (
   e: React.MouseEvent<HTMLButtonElement>,
   calc: CalcState,
-  setCalc: React.Dispatch<React.SetStateAction<CalcState>>
+  setCalc: React.Dispatch<React.SetStateAction<CalcState>>,
+  setError: React.Dispatch<React.SetStateAction<CalcState>>
 ) => {
-  
   const value = e.target.innerHTML;
   if (removeSpaces(calc.num).length < 16) {
     setCalc({
@@ -29,6 +30,8 @@ const numClickHandler = (
           : Number(removeSpaces(calc.num + value)),
       res: !calc.sign ? 0 : calc.res,
     });
+  } else {
+    handleError("Max number of digits reached", "INVALID_INPUT", setError);
   }
 };
 
@@ -75,12 +78,18 @@ const percentClickHandler = (
 const handleKeyboard = (
   e: KeyboardEvent,
   calc: CalcState,
-  setCalc: React.Dispatch<React.SetStateAction<CalcState>>
+  setCalc: React.Dispatch<React.SetStateAction<CalcState>>,
+  setError: React.Dispatch<React.SetStateAction<CalcState>>
 ) => {
   if (/^\d$/.test(e.key)) {
-      numClickHandler({ ...e, target: { innerHTML: e.key } }, calc, setCalc);
-      return;
-    }
+    numClickHandler(
+      { ...e, target: { innerHTML: e.key } },
+      calc,
+      setCalc,
+      setError
+    );
+    return;
+  }
 
   const mappedKey = keyboardMap[e.key as keyof typeof keyboardMap];
   if (mappedKey) {
@@ -163,6 +172,15 @@ const signClickHandler = (
     res: !calc.res && calc.num ? calc.num : calc.res,
     num: 0,
   });
+};
+
+const handleError = (
+  message: string,
+  type: ErrorType,
+  setError: React.Dispatch<React.SetStateAction<CalcState>>
+) => {
+  setError({ show: true, message, type });
+  setTimeout(() => setError({ show: false, message: "", type: null }), 3000);
 };
 
 export {

@@ -5,26 +5,25 @@ import Button from "./components/Button/Button.tsx";
 import Screen from './components/Screen/Screen.tsx';
 import { btnValues } from "./utils/btnValues.ts";
 import { backspaceHandler, commaClickHandler, equalsClickHandler, handleKeyboard, numClickHandler, percentClickHandler, resetClickHandler, signClickHandler } from "./utils/handlers.ts";
+import { ErrorState } from "./types/errTypes.ts";
+import ErrorNotification from "./components/ErrorNotification/ErrorNotification.tsx";
 
 
 
 const App = () => {
-  const [calc, setCalc] = useState({
-    sign: "",
-    num: 0,
-    res: 0,
-  });
-
+  const [calc, setCalc] = useState({ sign: "", num: 0, res: 0 });
+  const [err, setErr] = useState<ErrorState>({ show: false, message: '', type: null });
 
   useEffect(() => {
-    window.addEventListener('keydown', (e) => handleKeyboard(e, calc, setCalc));
+    window.addEventListener('keydown', (e) => handleKeyboard(e, calc, setCalc, setErr));
     return () => {
-      window.removeEventListener('keydown', (e) => handleKeyboard(e, calc, setCalc));
+      window.removeEventListener('keydown', (e) => handleKeyboard(e, calc, setCalc, setErr));
     };
   }, [calc]);
 
   return (
     <Wrapper>
+      <ErrorNotification message={err.message} show={err.show} onClose={() => setErr({ show: false, message: '', type: null })} />
       <Screen value={calc.num ? calc.num : calc.res} />
       <ButtonBox>
         {btnValues.flat().map((btn, i) => {
@@ -57,7 +56,7 @@ const App = () => {
                     commaClickHandler(e, calc, setCalc);
                     break;
                   default:
-                    numClickHandler(e, calc, setCalc);
+                    numClickHandler(e, calc, setCalc, setErr);
                     break;
                 }
               }}

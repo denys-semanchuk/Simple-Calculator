@@ -23,6 +23,7 @@ A modern calculator application built with React and TypeScript, featuring dark/
 1. Clone the repository:
 ```bash
 git clone https://github.com/yourusername/react-calculator.git
+```
 
 2. Install dependencies:
 cd react-calculator
@@ -30,6 +31,7 @@ npm install
 
 3. Start the development server:
 npm start
+
 
 ## Usage
 

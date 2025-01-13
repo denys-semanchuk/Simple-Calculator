@@ -1,139 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Wrapper } from './components/Wrapper/Wrapper.tsx';
 import ButtonBox from './components/ButtonBox/ButtonBox.tsx';
 import Button from "./components/Button/Button.tsx";
 import Screen from './components/Screen/Screen.tsx';
+import { btnValues } from "./utils/btnValues.ts";
+import { backspaceHandler, commaClickHandler, equalsClickHandler, handleKeyboard, numClickHandler, percentClickHandler, resetClickHandler, signClickHandler } from "./utils/handlers.ts";
 
-const btnValues = [
-  ["C", "←", "%", "/"],
-  [7, 8, 9, "X"],
-  [4, 5, 6, "-"],
-  [1, 2, 3, "+"],
-  [0, ".", "="],
-];
 
-const toLocaleString = (num) =>
-  String(num).replace(/(?<!\..*)(\d)(?=(?:\d{3})+(?:\.|$))/g, "$1 ");
-
-const removeSpaces = (num) => num.toString().replace(/\s/g, "");
 
 const App = () => {
-  let [calc, setCalc] = useState({
+  const [calc, setCalc] = useState({
     sign: "",
     num: 0,
     res: 0,
   });
 
-  const handleClick = (btn) => { switch (btn) { case "C": return resetClickHandler; case "+-": return invertClickHandler; case "%": return percentClickHandler; case "=": return equalsClickHandler; case "/": case "X": case "-": case "+": return signClickHandler; case ".": return commaClickHandler; case "←": return backspaceHandler; default: return numClickHandler; } };
 
-  const backspaceHandler = (calc: CalcState, setCalc: React.Dispatch<React.SetStateAction<CalcState>>) => {
-    if (calc.num !== 0) {
-      const numStr = calc.num.toString();
-      setCalc({
-        ...calc,
-        num: numStr.length === 1 ? 0 : Number(numStr.slice(0, -1))
-      });
-    }
-  };
-
-  const numClickHandler = (e) => {
-    e.preventDefault();
-    const value = e.target.innerHTML;
-
-    if (removeSpaces(calc.num).length < 16) {
-      setCalc({
-        ...calc,
-        num:
-          calc.num === 0 && value === "0"
-            ? "0"
-            : removeSpaces(calc.num) % 1 === 0
-              ? toLocaleString(Number(removeSpaces(calc.num + value)))
-              : toLocaleString(calc.num + value),
-        res: !calc.sign ? 0 : calc.res,
-      });
-    }
-  };
-
-  const commaClickHandler = (e) => {
-    e.preventDefault();
-    const value = e.target.innerHTML;
-
-    setCalc({
-      ...calc,
-      num: !calc.num.toString().includes(".") ? calc.num + value : calc.num,
-    });
-  };
-
-  const signClickHandler = (e) => {
-    e.preventDefault();
-    const value = e.target.innerHTML;
-
-    setCalc({
-      ...calc,
-      sign: value,
-      res: !calc.res && calc.num ? calc.num : calc.res,
-      num: 0,
-    });
-  };
-
-  const equalsClickHandler = () => {
-    if (calc.sign && calc.num) {
-      const math = (a, b, sign) =>
-        sign === "+"
-          ? a + b
-          : sign === "-"
-            ? a - b
-            : sign === "X"
-              ? a * b
-              : a / b;
-
-      setCalc({
-        ...calc,
-        res:
-          calc.num === "0" && calc.sign === "/"
-            ? "Can't divide with 0"
-            : toLocaleString(
-              math(
-                Number(removeSpaces(calc.res)),
-                Number(removeSpaces(calc.num)),
-                calc.sign
-              )
-            ),
-        sign: "",
-        num: 0,
-      });
-    }
-  };
-
-  const invertClickHandler = () => {
-    setCalc({
-      ...calc,
-      num: calc.num ? toLocaleString(removeSpaces(calc.num) * -1) : 0,
-      res: calc.res ? toLocaleString(removeSpaces(calc.res) * -1) : 0,
-      sign: "",
-    });
-  };
-
-  const percentClickHandler = () => {
-    let num = calc.num ? parseFloat(removeSpaces(calc.num)) : 0;
-    let res = calc.res ? parseFloat(removeSpaces(calc.res)) : 0;
-
-    setCalc({
-      ...calc,
-      num: (num /= Math.pow(100, 1)),
-      res: (res /= Math.pow(100, 1)),
-      sign: "",
-    });
-  };
-
-  const resetClickHandler = () => {
-    setCalc({
-      ...calc,
-      sign: "",
-      num: 0,
-      res: 0,
-    });
-  };
+  useEffect(() => {
+    window.addEventListener('keydown', (e) => handleKeyboard(e, calc, setCalc));
+    return () => {
+      window.removeEventListener('keydown', (e) => handleKeyboard(e, calc, setCalc));
+    };
+  }, [calc]);
 
   return (
     <Wrapper>
@@ -148,28 +36,28 @@ const App = () => {
               onClick={(e) => {
                 switch (btn) {
                   case "C":
-                    resetClickHandler();
+                    resetClickHandler(calc, setCalc);
                     break;
                   case "←":
                     backspaceHandler(calc, setCalc);
                     break;
                   case "%":
-                    percentClickHandler();
+                    percentClickHandler(calc, setCalc);
                     break;
                   case "=":
-                    equalsClickHandler();
+                    equalsClickHandler(calc, setCalc);
                     break;
                   case "/":
                   case "X":
                   case "-":
                   case "+":
-                    signClickHandler(e);
+                    signClickHandler(e, calc, setCalc);
                     break;
                   case ".":
-                    commaClickHandler(e);
+                    commaClickHandler(e, calc, setCalc);
                     break;
                   default:
-                    numClickHandler(e);
+                    numClickHandler(e, calc, setCalc);
                     break;
                 }
               }}
@@ -180,16 +68,5 @@ const App = () => {
     </Wrapper>
   );
 };
-
-export interface CalcState {
-  sign: string;
-  num: number;
-  res: number;
-}
-
-export type CalcAction = {
-  type: 'SET_NUMBER' | 'SET_SIGN' | 'CALCULATE' | 'RESET' | 'BACKSPACE';
-  payload?: any;
-}
 
 export default App;

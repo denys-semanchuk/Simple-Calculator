@@ -21,3 +21,11 @@ button:hover {
 .equals:hover {
   background-color: rgb(228, 39, 15);
 }
+
+button.light {
+  background-color: var(--light-button);
+}
+
+button.dark {
+  background-color: var(--dark-button);
+}

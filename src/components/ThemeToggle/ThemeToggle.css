@@ -1,0 +1,21 @@
+.theme-toggle {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  padding: 10px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  transition: all 0.3s ease;
+}
+
+.theme-toggle.light {
+  background: #ffffff;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.theme-toggle.dark {
+  background: #2d2d2d;
+  box-shadow: 0 2px 5px rgba(255,255,255,0.1);
+}

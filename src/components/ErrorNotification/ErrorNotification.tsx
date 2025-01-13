@@ -1,5 +1,6 @@
 import React from 'react';
 import './ErrorNotification.css';
+import { useTheme } from '../../context/ThemeContext.tsx';
 
 interface ErrorNotificationProps {
   message: string;
@@ -8,10 +9,11 @@ interface ErrorNotificationProps {
 }
 
 const ErrorNotification: React.FC<ErrorNotificationProps> = ({ message, show, onClose }) => {
+  const { theme } = useTheme();
   if (!show) return null;
 
   return (
-    <div className="error-notification">
+    <div className={`error-notification ${theme}`}>
       <span>{message}</span>
       <button onClick={onClose}>×</button>
     </div>

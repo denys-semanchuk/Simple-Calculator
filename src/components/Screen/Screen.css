@@ -12,3 +12,13 @@
   font-weight: bold;
   box-sizing: border-box;
 }
+
+.screen.light {
+  background-color: var(--light-screen);
+  color: var(--light-screen-text);
+}
+
+.screen.dark {
+  background-color: var(--dark-screen);
+  color: var(--dark-screen-text);
+}

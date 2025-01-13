@@ -7,12 +7,19 @@ import { btnValues } from "./utils/btnValues.ts";
 import { backspaceHandler, commaClickHandler, equalsClickHandler, handleKeyboard, numClickHandler, percentClickHandler, resetClickHandler, signClickHandler } from "./utils/handlers.ts";
 import { ErrorState } from "./types/errTypes.ts";
 import ErrorNotification from "./components/ErrorNotification/ErrorNotification.tsx";
+import { useTheme } from "./context/ThemeContext.tsx";
+import ThemeToggle from "./components/ThemeToggle/ThemeToggle.tsx";
 
 
 
 const App = () => {
   const [calc, setCalc] = useState({ sign: "", num: 0, res: 0 });
   const [err, setErr] = useState<ErrorState>({ show: false, message: '', type: null });
+  const { theme } = useTheme();
+
+  useEffect(() => {
+    document.body.className = theme;
+  }, [theme]);
 
   useEffect(() => {
     window.addEventListener('keydown', (e) => handleKeyboard(e, calc, setCalc, setErr));
@@ -22,49 +29,52 @@ const App = () => {
   }, [calc]);
 
   return (
-    <Wrapper>
-      <ErrorNotification message={err.message} show={err.show} onClose={() => setErr({ show: false, message: '', type: null })} />
-      <Screen value={calc.num ? calc.num : calc.res} />
-      <ButtonBox>
-        {btnValues.flat().map((btn, i) => {
-          return (
-            <Button
-              key={i}
-              className={btn === "=" ? "equals" : ""}
-              value={btn}
-              onClick={(e) => {
-                switch (btn) {
-                  case "C":
-                    resetClickHandler(calc, setCalc);
-                    break;
-                  case "←":
-                    backspaceHandler(calc, setCalc);
-                    break;
-                  case "%":
-                    percentClickHandler(calc, setCalc);
-                    break;
-                  case "=":
-                    equalsClickHandler(calc, setCalc);
-                    break;
-                  case "/":
-                  case "X":
-                  case "-":
-                  case "+":
-                    signClickHandler(e, calc, setCalc);
-                    break;
-                  case ".":
-                    commaClickHandler(e, calc, setCalc);
-                    break;
-                  default:
-                    numClickHandler(e, calc, setCalc, setErr);
-                    break;
-                }
-              }}
-            />
-          );
-        })}
-      </ButtonBox>
-    </Wrapper>
+    <div className={`app ${theme}`}>
+      <ThemeToggle />
+      <Wrapper>
+        <ErrorNotification message={err.message} show={err.show} onClose={() => setErr({ show: false, message: '', type: null })} />
+        <Screen value={calc.num ? calc.num : calc.res} />
+        <ButtonBox>
+          {btnValues.flat().map((btn, i) => {
+            return (
+              <Button
+                key={i}
+                className={btn === "=" ? "equals" : ""}
+                value={btn}
+                onClick={(e) => {
+                  switch (btn) {
+                    case "C":
+                      resetClickHandler(calc, setCalc);
+                      break;
+                    case "←":
+                      backspaceHandler(calc, setCalc);
+                      break;
+                    case "%":
+                      percentClickHandler(calc, setCalc);
+                      break;
+                    case "=":
+                      equalsClickHandler(calc, setCalc);
+                      break;
+                    case "/":
+                    case "X":
+                    case "-":
+                    case "+":
+                      signClickHandler(e, calc, setCalc);
+                      break;
+                    case ".":
+                      commaClickHandler(e, calc, setCalc);
+                      break;
+                    default:
+                      numClickHandler(e, calc, setCalc, setErr);
+                      break;
+                  }
+                }}
+              />
+            );
+          })}
+        </ButtonBox>
+      </Wrapper>
+    </div>
   );
 };
 

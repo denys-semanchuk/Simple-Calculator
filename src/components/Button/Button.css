@@ -1,6 +1,7 @@
+@import '../../index.css';
 button {
   border: none;
-  background-color: rgb(80, 60, 209);
+  background-color: var(--button-primary);
   font-size: 24px;
   color: rgb(255, 255, 255);
   font-weight: bold;
@@ -10,7 +11,7 @@ button {
 }
 
 button:hover {
-  background-color: rgb(61, 43, 184);
+  background-color: var(--button-hover);
 }
 
 .equals {
@@ -20,12 +21,4 @@ button:hover {
 
 .equals:hover {
   background-color: rgb(228, 39, 15);
-}
-
-button.light {
-  background-color: var(--light-button);
-}
-
-button.dark {
-  background-color: var(--dark-button);
 }

@@ -1,9 +1,10 @@
+@import "../../index.css";
 .screen {
   height: 100px;
   width: 100%;
   margin-bottom: 10px;
   padding: 0 10px;
-  background-color: #4357692d;
+  background-color: var(--bg-third);
   border-radius: 10px;
   display: flex;
   align-items: center;
@@ -11,14 +12,4 @@
   color: white;
   font-weight: bold;
   box-sizing: border-box;
-}
-
-.screen.light {
-  background-color: var(--light-screen);
-  color: var(--light-screen-text);
-}
-
-.screen.dark {
-  background-color: var(--dark-screen);
-  color: var(--dark-screen-text);
 }

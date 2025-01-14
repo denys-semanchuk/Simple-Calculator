@@ -3,15 +3,6 @@
   height: 540px;
   padding: 10px;
   border-radius: 10px;
-  background-color: #485461;
-  background-image: linear-gradient(315deg, #485461 0%, #28313b 74%);
+  background-color: var(--bg-third);
   transition: all 0.3s ease;
-}
-
-.wrapper.light {
-  background-color: var(--light-calc-bg);
-}
-
-.wrapper.dark {
-  background-color: var(--dark-calc-bg);
 }

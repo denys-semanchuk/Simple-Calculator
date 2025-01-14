@@ -18,10 +18,6 @@ const App = () => {
   const { theme } = useTheme();
 
   useEffect(() => {
-    document.body.className = theme;
-  }, [theme]);
-
-  useEffect(() => {
     window.addEventListener('keydown', (e) => handleKeyboard(e, calc, setCalc, setErr));
     return () => {
       window.removeEventListener('keydown', (e) => handleKeyboard(e, calc, setCalc, setErr));

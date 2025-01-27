@@ -3,7 +3,12 @@ import React from "react";
 export interface CalcState {
   sign: string;
   num: number;
-  res: number | string;
+  res: number;
+  expression: string;
+  brackets: {
+    count: number;
+    expressions: BracketExpression[];
+  };
 }
 
 export type CalcAction = {
@@ -24,4 +29,11 @@ export interface SyntheticButtonEvent {
     innerHTML: string;
   }
   preventDefault: () => void;
+}
+
+export interface BracketExpression {
+  num: number;
+  sign: string;
+  res: number;
+  expression: string;
 }

@@ -4,7 +4,7 @@ import ButtonBox from 'components/ButtonBox/ButtonBox';
 import Button from "components/Button/Button";
 import Screen from 'components/Screen/Screen';
 import { btnValues } from "utils/btnValues";
-import { backspaceHandler, commaClickHandler, equalsClickHandler, handleKeyboard, numClickHandler, percentClickHandler, resetClickHandler, signClickHandler } from "utils/handlers";
+import { backspaceHandler, closeBracketHandler, commaClickHandler, equalsClickHandler, handleKeyboard, numClickHandler, openBracketHandler, percentClickHandler, resetClickHandler, signClickHandler } from "utils/handlers";
 import { ErrorState } from "types/errTypes";
 import ErrorNotification from "components/ErrorNotification/ErrorNotification";
 import { useTheme } from "context/ThemeContext";
@@ -15,7 +15,16 @@ import { useHistory } from "context/HistoryContext";
 
 
 const App = () => {
-  const [calc, setCalc] = useState<CalcState>({ sign: "", num: 0, res: 0 });
+  const [calc, setCalc] = useState<CalcState>({
+    sign: "",
+    num: 0,
+    res: 0,
+    expression: '',
+    brackets: {
+      count: 0,
+      expressions: []
+    }
+  });
   const [err, setErr] = useState<ErrorState>({ show: false, message: '', type: null });
   const { theme } = useTheme();
   const { addToHistory } = useHistory()
@@ -32,7 +41,7 @@ const App = () => {
       <div className="calculator-container">
         <Wrapper>
           <ErrorNotification message={err.message} show={err.show} onClose={() => setErr({ show: false, message: '', type: null })} />
-          <Screen value={calc.num ? calc.num : calc.res} />
+          <Screen value={calc.num ? calc.num : calc.res} brackets={calc.brackets} expression={calc.expression}/>
           <ButtonBox>
             {btnValues.flat().map((btn, i) => {
               return (
@@ -42,6 +51,12 @@ const App = () => {
                   value={btn}
                   onClick={(e) => {
                     switch (btn) {
+                      case "(":
+                        openBracketHandler(calc, setCalc);
+                        break;
+                      case ")":
+                        closeBracketHandler(calc, setCalc);
+                        break;
                       case "C":
                         resetClickHandler(calc, setCalc);
                         break;

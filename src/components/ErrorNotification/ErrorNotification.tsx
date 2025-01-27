@@ -1,6 +1,6 @@
 import React from 'react';
 import './ErrorNotification.css';
-import { useTheme } from '../../context/ThemeContext.tsx';
+import { useTheme } from 'context/ThemeContext';
 
 interface ErrorNotificationProps {
   message: string;

@@ -1,9 +1,9 @@
-import { React } from "react";
+import React from "react";
 
 export interface CalcState {
   sign: string;
   num: number;
-  res: number;
+  res: number | string;
 }
 
 export type CalcAction = {
@@ -15,3 +15,13 @@ export type CalcHandler = (
   calc: CalcState,
   setCalc: React.Dispatch<React.SetStateAction<CalcState>>
 ) => void;
+
+export interface SyntheticButtonEvent {
+  currentTarget: {
+    innerHTML: string;
+  };
+  target: {
+    innerHTML: string;
+  }
+  preventDefault: () => void;
+}

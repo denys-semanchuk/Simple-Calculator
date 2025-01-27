@@ -1,8 +1,19 @@
 import React from "react";
-import { CalcState, CalcHandler } from "../types/calcTypes.ts";
-import { removeSpaces, toLocaleString } from "./calculatorHandlers.ts";
-import { keyboardMap } from "./keyboardMap.ts";
-import { ErrorType } from "../types/errTypes.ts";
+import { CalcState, CalcHandler, SyntheticButtonEvent } from "types/calcTypes";
+import { removeSpaces, toLocaleString } from "./calculatorHandlers";
+import { keyboardMap } from "./keyboardMap";
+import { ErrorState, ErrorType } from "types/errTypes";
+import { HistoryItem } from "types/historyTypes";
+
+const createSyntheticEvent = (key: string): SyntheticButtonEvent => ({
+  currentTarget: {
+    innerHTML: key,
+  },
+  target: {
+    innerHTML: key,
+  },
+  preventDefault: () => {},
+});
 
 const backspaceHandler: CalcHandler = (calc, setCalc) => {
   if (calc.num !== 0) {
@@ -15,10 +26,10 @@ const backspaceHandler: CalcHandler = (calc, setCalc) => {
 };
 
 const numClickHandler = (
-  e: React.MouseEvent<HTMLButtonElement>,
+  e: SyntheticButtonEvent,
   calc: CalcState,
   setCalc: React.Dispatch<React.SetStateAction<CalcState>>,
-  setError: React.Dispatch<React.SetStateAction<CalcState>>
+  setError: React.Dispatch<React.SetStateAction<ErrorState>>
 ) => {
   const value = e.target.innerHTML;
   if (removeSpaces(calc.num).length < 16) {
@@ -36,15 +47,18 @@ const numClickHandler = (
 };
 
 const commaClickHandler = (
-  e: React.MouseEvent<HTMLButtonElement>,
+  e: SyntheticButtonEvent,
   calc: CalcState,
   setCalc: React.Dispatch<React.SetStateAction<CalcState>>
 ) => {
-  const value = e.target.innerHTML;
+  const element = e.target as HTMLButtonElement;
+  const value = element.innerHTML;
 
   setCalc({
     ...calc,
-    num: !calc.num.toString().includes(".") ? calc.num + value : calc.num,
+    num: Number(
+      !calc.num.toString().includes(".") ? calc.num + value : calc.num
+    ),
   });
 };
 
@@ -74,20 +88,15 @@ const percentClickHandler = (
     sign: "",
   });
 };
-
 const handleKeyboard = (
   e: KeyboardEvent,
   calc: CalcState,
   setCalc: React.Dispatch<React.SetStateAction<CalcState>>,
-  setError: React.Dispatch<React.SetStateAction<CalcState>>
+  setError: React.Dispatch<React.SetStateAction<ErrorState>>,
+  addToHistory: (item: HistoryItem) => void
 ) => {
   if (/^\d$/.test(e.key)) {
-    numClickHandler(
-      { ...e, target: { innerHTML: e.key } },
-      calc,
-      setCalc,
-      setError
-    );
+    numClickHandler(createSyntheticEvent(e.key), calc, setCalc, setError);
     return;
   }
 
@@ -104,24 +113,16 @@ const handleKeyboard = (
         percentClickHandler(calc, setCalc);
         break;
       case "=":
-        equalsClickHandler(calc, setCalc);
+        equalsClickHandler(calc, setCalc, addToHistory);
         break;
       case "/":
       case "X":
       case "-":
       case "+":
-        signClickHandler(
-          { ...e, target: { innerHTML: mappedKey } },
-          calc,
-          setCalc
-        );
+        signClickHandler(createSyntheticEvent(mappedKey), calc, setCalc);
         break;
       case ".":
-        commaClickHandler(
-          { ...e, target: { innerHTML: mappedKey } },
-          calc,
-          setCalc
-        );
+        commaClickHandler(createSyntheticEvent(mappedKey), calc, setCalc);
         break;
     }
   }
@@ -129,10 +130,11 @@ const handleKeyboard = (
 
 const equalsClickHandler = (
   calc: CalcState,
-  setCalc: React.Dispatch<React.SetStateAction<CalcState>>
+  setCalc: React.Dispatch<React.SetStateAction<CalcState>>,
+  addToHistory: (item: HistoryItem) => void
 ) => {
   if (calc.sign && calc.num) {
-    const math = (a, b, sign) =>
+    const math = (a: number, b: number, sign: string) =>
       sign === "+"
         ? a + b
         : sign === "-"
@@ -140,27 +142,51 @@ const equalsClickHandler = (
         : sign === "X"
         ? a * b
         : a / b;
-
+    const result = calculateResult(calc);
+    addToHistory({
+      expression: `${calc.res} ${calc.sign} ${calc.num}`,
+      result,
+      timestamp: new Date(),
+    });
     setCalc({
       ...calc,
-      res:
-        String(calc.num) === "0" && calc.sign === "/"
-          ? "Can't divide with 0"
-          : toLocaleString(
-              math(
-                Number(removeSpaces(calc.res)),
-                Number(removeSpaces(calc.num)),
-                calc.sign
-              )
-            ),
+      res: result,
       sign: "",
       num: 0,
     });
   }
 };
 
+const calculateResult = (calc: CalcState): number => {
+  let result = 0;
+  const num1 = parseFloat(removeSpaces(calc.res));
+  const num2 = parseFloat(removeSpaces(calc.num));
+
+  switch (calc.sign) {
+    case "+":
+      result = num1 + num2;
+      break;
+    case "-":
+      result = num1 - num2;
+      break;
+    case "X":
+      result = num1 * num2;
+      break;
+    case "/":
+      if (num2 === 0) {
+        throw new Error("Division by zero");
+      }
+      result = num1 / num2;
+      break;
+    default:
+      result = num2;
+  }
+
+  return Number(result.toFixed(8));
+};
+
 const signClickHandler = (
-  e: React.MouseEvent<HTMLButtonElement>,
+  e: SyntheticButtonEvent,
   calc: CalcState,
   setCalc: React.Dispatch<React.SetStateAction<CalcState>>
 ) => {
@@ -177,7 +203,7 @@ const signClickHandler = (
 const handleError = (
   message: string,
   type: ErrorType,
-  setError: React.Dispatch<React.SetStateAction<CalcState>>
+  setError: React.Dispatch<React.SetStateAction<ErrorState>>
 ) => {
   setError({ show: true, message, type });
   setTimeout(() => setError({ show: false, message: "", type: null }), 3000);

@@ -55,3 +55,20 @@ body {
   --button-hover: #2962ff;
   --accent: #82b1ff;
 }
+
+.calculator-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  flex-direction: column;
+}
+
+@media (max-width: 768px) {
+  .calculator-container {
+    flex-direction: column;
+    align-items: center;
+  }
+}

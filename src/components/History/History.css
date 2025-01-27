@@ -1,0 +1,40 @@
+.history {
+  width: 330px;
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 15px;
+  border-radius: 12px;
+  background-color: var(--bg-secondary);
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--bg-third);
+}
+
+.history-item {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--bg-third);
+}
+
+.history-item .expression {
+  color: var(--text-secondary);
+}
+
+.history-item .result {
+  font-weight: bold;
+  color: var(--text-primary);
+}
+
+.history-item .timestamp {
+  font-size: 0.8em;
+  color: var(--text-secondary);
+}
+
+button {
+  padding: 5px;
+}

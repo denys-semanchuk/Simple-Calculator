@@ -5,6 +5,7 @@
   padding: 15px;
   border-radius: 12px;
   background-color: var(--bg-secondary);
+  color: var(--text-primary);
 }
 
 .history-header {

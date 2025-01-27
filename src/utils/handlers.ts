@@ -78,13 +78,35 @@ const percentClickHandler = (
   calc: CalcState,
   setCalc: React.Dispatch<React.SetStateAction<CalcState>>
 ) => {
-  let num = calc.num ? parseFloat(removeSpaces(calc.num)) : 0;
-  let res = calc.res ? parseFloat(removeSpaces(calc.res)) : 0;
+  if (!calc.num || !calc.res) return;
+
+  const baseNumber = parseFloat(removeSpaces(calc.res));
+  const percentage = parseFloat(removeSpaces(calc.num));
+  const percentValue = (baseNumber * percentage) / 100;
+
+  let result = 0;
+  switch (calc.sign) {
+    case "+":
+      result = baseNumber + percentValue;
+      break;
+    case "-":
+      result = baseNumber - percentValue;
+      break;
+    case "X":
+      result = baseNumber * (percentage / 100);
+      break;
+    case "/":
+      if (percentage === 0) throw new Error("Division by zero");
+      result = (baseNumber / percentage) * 100;
+      break;
+    default:
+      result = percentValue;
+  }
 
   setCalc({
     ...calc,
-    num: (num /= Math.pow(100, 1)),
-    res: (res /= Math.pow(100, 1)),
+    num: result,
+    res: result,
     sign: "",
   });
 };
@@ -177,6 +199,9 @@ const calculateResult = (calc: CalcState): number => {
         throw new Error("Division by zero");
       }
       result = num1 / num2;
+      break;
+    case "%":
+      result = num1 % num2;
       break;
     default:
       result = num2;

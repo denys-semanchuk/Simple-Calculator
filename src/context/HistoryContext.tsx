@@ -13,7 +13,6 @@ export const HistoryProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [history, setHistory] = useState<HistoryItem[]>([]);
 
   const addToHistory = (item: HistoryItem) => {
-    console.log('Denys')
     setHistory(prev => [item, ...prev].slice(0, 10));
   };
 

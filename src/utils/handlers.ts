@@ -3,7 +3,7 @@ import {
   CalcState,
   CalcHandler,
   SyntheticButtonEvent,
-  BracketExpression,
+  Operation,
 } from "types/calcTypes";
 import { removeSpaces } from "./calculatorHandlers";
 import { keyboardMap } from "./keyboardMap";
@@ -11,41 +11,37 @@ import { ErrorState, ErrorType } from "types/errTypes";
 import { HistoryItem } from "types/historyTypes";
 
 
-interface Operation {
-  operator: string;
-  value: number;
-}
-
-
 const calculateExpression = (operations: Operation[]): number => {
-  let result = operations[0].value;
-  let i = 1;
-
-  while (i < operations.length) {
-    const op = operations[i].operator;
-    const nextVal = operations[i].value;
-
-    if (op === "X" || op === "/") {
-      if (op === "X") result *= nextVal;
-      if (op === "/") {
-        if (nextVal === 0) throw new Error("Division by zero");
-        result /= nextVal;
+  if (!operations.length) return 0;
+  
+  const ops = operations.map(op => ({...op}));
+  
+  for (let i = 0; i < ops.length; i++) {
+    if (ops[i].operator === "X" || ops[i].operator === "/") {
+      const current = ops[i].value;
+      const prev = ops[i-1].value;
+      
+      if (ops[i].operator === "X") {
+        ops[i-1].value = prev * current;
+      } else {
+        if (current === 0) throw new Error("Division by zero");
+        ops[i-1].value = prev / current;
       }
-      operations.splice(i - 1, 2);
-    } else {
-      i++;
+      
+      ops.splice(i, 1);
+      i--;
     }
   }
-
-  // Second pass: addition and subtraction
-  for (let i = 0; i < operations.length; i++) {
-    const op = operations[i].operator;
-    const val = operations[i].value;
-
-    if (op === "+") result += val;
-    if (op === "-") result -= val;
+  
+  let result = ops[0].value;
+  for (let i = 1; i < ops.length; i++) {
+    if (ops[i].operator === "+") {
+      result += ops[i].value;
+    } else if (ops[i].operator === "-") {
+      result -= ops[i].value;
+    }
   }
-
+  
   return result;
 };
 
@@ -216,7 +212,6 @@ const equalsClickHandler = (
       });
     }
     const result = calculateExpression(operations);
-
     addToHistory({
       expression: `${calc.res} ${calc.sign} ${calc.num}`,
       result,
@@ -279,17 +274,6 @@ const handleError = (
   setTimeout(() => setError({ show: false, message: "", type: null }), 3000);
 };
 
-/**/ /////////////////////////////////////////////////////////////// */
-/*Brackets */
-const calculateBracketResult = (calc: CalcState): number => {
-  if (calc.brackets.count === 0) {
-    return calculateResult(calc);
-  }
-
-  const lastExpression =
-    calc.brackets.expressions[calc.brackets.expressions.length - 1];
-  return lastExpression.res;
-};
 export const openBracketHandler = (
   calc: CalcState,
   setCalc: React.Dispatch<React.SetStateAction<CalcState>>
@@ -324,7 +308,7 @@ export const closeBracketHandler = (
   if (calc.brackets.count === 0) return;
 
   const result = calculateResult(calc);
-  const updatedExpression = calc.expression + result + ")";
+  const updatedExpression = calc.expression + ")";
 
   setCalc({
     ...calc,
@@ -347,4 +331,6 @@ export {
   percentClickHandler,
   equalsClickHandler,
   signClickHandler,
+  calculateResult,
+  calculateExpression
 };

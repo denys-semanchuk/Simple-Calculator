@@ -6,3 +6,11 @@ export const btnValues = [
   [0, ".", "%", "+"],
   ["="]
 ];
+
+export const engineeringButtons = [
+  ["sin", "cos", "tan", "C", "←", "%", "/"],
+  ["π", "e", "log", 7, 8, 9, "X"],
+  ["(", ")", "ln", 4, 5, 6, "-"],
+  ["x²", "√", "^", 1, 2, 3, "+"],
+  ["rad", "deg", "!", 0, ".", "="]
+];

@@ -13,7 +13,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -35,8 +36,20 @@
     ]
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.26.7",
+    "@babel/preset-react": "^7.26.3",
+    "@babel/preset-typescript": "^7.26.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.2.0",
+    "@types/jest": "^29.5.14",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
-    "@types/react-textfit": "^1.1.4"
+    "@types/react-textfit": "^1.1.4",
+    "@vitest/ui": "^3.0.4",
+    "babel-jest": "^29.7.0",
+    "jest": "^27.5.1",
+    "jsdom": "^26.0.0",
+    "react-test-renderer": "^19.0.0",
+    "vitest": "^3.0.4"
   }
 }

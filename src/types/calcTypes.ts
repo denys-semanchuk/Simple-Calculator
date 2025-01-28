@@ -1,13 +1,14 @@
 import React from "react";
-
+export type CalculatorMode = 'basic' | 'engineering';
 export interface CalcState {
+  mode: CalculatorMode;
   sign: string;
   num: number;
   res: number;
   expression: string;
   brackets: {
     count: number;
-    expressions: BracketExpression[];
+    expressions: Array<any>;
   };
 }
 
@@ -36,4 +37,9 @@ export interface BracketExpression {
   sign: string;
   res: number;
   expression: string;
+}
+
+export interface Operation {
+  operator: string;
+  value: number;
 }

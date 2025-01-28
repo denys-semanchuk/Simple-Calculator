@@ -33,7 +33,7 @@ const App = () => {
     return () => {
       window.removeEventListener('keydown', (e) => handleKeyboard(e, calc, setCalc, setErr, addToHistory));
     };
-  }, [calc]);
+  }, []);
 
   return (
     <div className={`app ${theme}`}>

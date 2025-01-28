@@ -1,0 +1,20 @@
+.mode-toggle {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.mode-toggle.light {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.mode-toggle.dark {
+  background-color: var(--bg-third);
+  color: var(--text-primary);
+}

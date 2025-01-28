@@ -1,38 +1,12 @@
 import { CalcState } from "types/calcTypes";
 import { HistoryItem } from "types/historyTypes";
+import { calculateResult } from "./handlers";
 
 export const toLocaleString = (num: number) =>
   String(num).replace(/(?<!\..*)(\d)(?=(?:\d{3})+(?:\.|$))/g, "$1 ");
 
 export const removeSpaces = (num: number | string) =>
   num.toString().replace(/\s/g, "");
-const calculateResult = (calc: CalcState) => {
-  let result = 0;
-  const num1 = parseFloat(removeSpaces(calc.res));
-  const num2 = parseFloat(removeSpaces(calc.num));
-
-  switch (calc.sign) {
-    case "+":
-      result = num1 + num2;
-      break;
-    case "-":
-      result = num1 - num2;
-      break;
-    case "X":
-      result = num1 * num2;
-      break;
-    case "/":
-      if (num2 === 0) {
-        throw new Error("Division by zero");
-      }
-      result = num1 / num2;
-      break;
-    default:
-      result = num2;
-  }
-
-  return Number(result.toFixed(8));
-};
 
 export const equalsClickHandler = (
   calc: CalcState,

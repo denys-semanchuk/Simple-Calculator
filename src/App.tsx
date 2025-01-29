@@ -1,18 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Wrapper } from 'components/Wrapper/Wrapper';
-import ButtonBox from 'components/ButtonBox/ButtonBox';
-import Button from "components/Button/Button";
-import Screen from 'components/Screen/Screen';
+import { Wrapper, ButtonBox, Screen, Button, ModeToggle, History, ThemeToggle, ErrorNotification } from 'components';
 import { btnValues, engineeringButtons } from "utils/btnValues";
 import { backspaceHandler, closeBracketHandler, commaClickHandler, equalsClickHandler, handleKeyboard, numClickHandler, openBracketHandler, percentClickHandler, resetClickHandler, signClickHandler } from "utils/handlers";
 import { ErrorState } from "types/errTypes";
-import ErrorNotification from "components/ErrorNotification/ErrorNotification";
 import { useTheme } from "context/ThemeContext";
-import ThemeToggle from "components/ThemeToggle/ThemeToggle";
 import { CalcState, SyntheticButtonEvent } from "types/calcTypes";
-import History from "components/History/History";
 import { useHistory } from "context/HistoryContext";
-import ModeToggle from "components/ModeToggle/ModeToggle";
 
 
 const App = () => {

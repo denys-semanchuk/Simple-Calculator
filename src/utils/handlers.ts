@@ -10,29 +10,28 @@ import { keyboardMap } from "./keyboardMap";
 import { ErrorState, ErrorType } from "types/errTypes";
 import { HistoryItem } from "types/historyTypes";
 
-
 const calculateExpression = (operations: Operation[]): number => {
   if (!operations.length) return 0;
-  
-  const ops = operations.map(op => ({...op}));
-  
+
+  const ops = operations.map((op) => ({ ...op }));
+
   for (let i = 0; i < ops.length; i++) {
     if (ops[i].operator === "X" || ops[i].operator === "/") {
       const current = ops[i].value;
-      const prev = ops[i-1].value;
-      
+      const prev = ops[i - 1].value;
+
       if (ops[i].operator === "X") {
-        ops[i-1].value = prev * current;
+        ops[i - 1].value = prev * current;
       } else {
         if (current === 0) throw new Error("Division by zero");
-        ops[i-1].value = prev / current;
+        ops[i - 1].value = prev / current;
       }
-      
+
       ops.splice(i, 1);
       i--;
     }
   }
-  
+
   let result = ops[0].value;
   for (let i = 1; i < ops.length; i++) {
     if (ops[i].operator === "+") {
@@ -41,7 +40,7 @@ const calculateExpression = (operations: Operation[]): number => {
       result -= ops[i].value;
     }
   }
-  
+
   return result;
 };
 
@@ -163,7 +162,6 @@ const handleKeyboard = (
     numClickHandler(createSyntheticEvent(e.key), calc, setCalc, setError);
     return;
   }
-
   const mappedKey = keyboardMap[e.key as keyof typeof keyboardMap];
   if (mappedKey) {
     switch (mappedKey) {
@@ -201,9 +199,10 @@ const equalsClickHandler = (
 
   try {
     const operations: Operation[] = [];
-    const numbers = calc.expression.split(/[\+\-X\/]/).map(Number);
-    const operators = calc.expression.match(/[\+\-X\/]/g) || [];
+    if (!(calc && calc !== null)) return;
 
+    const numbers = calc!.expression!.match(/-?\d+(\.\d+)?/g)!.map(Number);
+    const operators = calc.expression.match(/[\+\-X\/]/g) || [];
     operations.push({ operator: "+", value: numbers[0] });
     for (let i = 0; i < operators.length; i++) {
       operations.push({
@@ -219,6 +218,7 @@ const equalsClickHandler = (
     });
 
     setCalc({
+      ...calc,
       sign: "",
       num: 0,
       res: result,
@@ -255,7 +255,18 @@ const signClickHandler = (
   setCalc: React.Dispatch<React.SetStateAction<CalcState>>
 ) => {
   const value = e.currentTarget.innerHTML;
-
+  if (isOperator(calc.expression)) {
+    let newExpression = calc.expression.slice(0, -2);
+    console.log(newExpression);
+    setCalc({
+      ...calc,
+      expression: `${newExpression} ${value}`,
+      sign: value,
+      res: !calc.res && calc.num ? calc.num : calc.res,
+      num: 0,
+    });
+    return
+  }
   setCalc({
     ...calc,
     sign: value,
@@ -309,17 +320,23 @@ export const closeBracketHandler = (
 
   const result = calculateResult(calc);
   const updatedExpression = calc.expression + ")";
-
   setCalc({
     ...calc,
     brackets: {
       count: calc.brackets.count - 1,
-      expressions: calc.brackets.expressions.slice(0, -1),
+      expressions: calc.brackets.expressions.slice(-1),
     },
     num: result,
     res: result,
     expression: updatedExpression,
   });
+};
+
+const isOperator = (value: string): boolean => {
+  const str = value.trimEnd()
+  const operatorRegex = /[+\-X/]$/;
+  console.log(str)
+  return operatorRegex.test(str[str.length-1]);
 };
 
 export {
@@ -332,5 +349,5 @@ export {
   equalsClickHandler,
   signClickHandler,
   calculateResult,
-  calculateExpression
+  calculateExpression,
 };

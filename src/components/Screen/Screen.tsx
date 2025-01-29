@@ -9,9 +9,9 @@ const Screen = ({ value,expression, brackets }: ScreenProps) => {
         {brackets!.count > 0 && `(x${brackets!.count})`}
       </div>
       <div className="expression">{expression || '0'}</div>
-      <Textfit className="screen" mode="single" max={70}>
+      <div className="screen-value screen">
         {value}
-      </Textfit>
+      </div>
     </div>
   );
 };

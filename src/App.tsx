@@ -8,15 +8,17 @@ import { CalcState, SyntheticButtonEvent } from "types/calcTypes";
 import { useHistory } from "context/HistoryContext";
 import { angleUnitHandler, constantHandler, factorialHandler, logarithmHandler, powerHandler, rootHandler, trigonometricHandler } from "utils/engineerHandlers";
 import cs from 'classnames';
+import { getLastMode, getLastResult, saveLastMode } from "utils/storageHandlers";
 
 const App = () => {
+  const lastSession = getLastResult();
   const [calc, setCalc] = useState<CalcState>({
-    mode: 'basic',
+    mode: getLastMode(),
     equalsClicked: false,
     sign: "",
     num: 0,
-    res: 0,
-    expression: '',
+    res: lastSession.result,
+    expression: lastSession.expression,
     brackets: {
       count: 0,
       expressions: []
@@ -27,9 +29,11 @@ const App = () => {
   const { addToHistory } = useHistory()
 
   const toggleMode = () => {
+    const mode = calc.mode === 'basic' ? 'engineering' : 'basic';
+    saveLastMode(mode)
     setCalc(prev => ({
       ...prev,
-      mode: prev.mode === 'basic' ? 'engineering' : 'basic'
+      mode
     }));
   };
 

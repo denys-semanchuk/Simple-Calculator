@@ -11,6 +11,7 @@ import { ErrorState, ErrorType } from "types/errTypes";
 import { HistoryItem } from "types/historyTypes";
 import { calculateOperations } from "./calculateOperations";
 import { calculateExpression } from "./calculateExpression";
+import { saveLastResult } from "./storageHandlers";
 
 const createSyntheticEvent = (key: string): SyntheticButtonEvent => ({
   currentTarget: {
@@ -23,7 +24,7 @@ const createSyntheticEvent = (key: string): SyntheticButtonEvent => ({
 });
 
 const backspaceHandler: CalcHandler = (calc, setCalc) => {
-  if (calc.num !== 0 ) {
+  if (calc.num !== 0) {
     const numStr = calc.num.toString();
     setCalc({
       ...calc,
@@ -163,7 +164,7 @@ const handleKeyboard = (
 const equalsClickHandler = (
   calc: CalcState,
   setCalc: React.Dispatch<React.SetStateAction<CalcState>>,
-  addToHistory: (item: HistoryItem) => void
+  addToHistory: (item: HistoryItem) => void,
 ) => {
   if (!calc.sign && !calc.brackets.count) return;
 
@@ -172,6 +173,7 @@ const equalsClickHandler = (
 
     const operations: Operation[] = calculateOperations(calc);
     const result = calculateExpression(operations);
+    saveLastResult(result, calc.expression);
     addToHistory({
       expression: `${calc.res} ${calc.sign} ${calc.num}`,
       result,

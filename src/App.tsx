@@ -11,6 +11,7 @@ import { useHistory } from "context/HistoryContext";
 const App = () => {
   const [calc, setCalc] = useState<CalcState>({
     mode: 'basic',
+    equalsClicked: false,
     sign: "",
     num: 0,
     res: 0,

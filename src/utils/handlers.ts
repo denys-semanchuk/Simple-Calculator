@@ -9,40 +9,8 @@ import { removeSpaces } from "./calculatorHandlers";
 import { keyboardMap } from "./keyboardMap";
 import { ErrorState, ErrorType } from "types/errTypes";
 import { HistoryItem } from "types/historyTypes";
-
-const calculateExpression = (operations: Operation[]): number => {
-  if (!operations.length) return 0;
-
-  const ops = operations.map((op) => ({ ...op }));
-
-  for (let i = 0; i < ops.length; i++) {
-    if (ops[i].operator === "X" || ops[i].operator === "/") {
-      const current = ops[i].value;
-      const prev = ops[i - 1].value;
-
-      if (ops[i].operator === "X") {
-        ops[i - 1].value = prev * current;
-      } else {
-        if (current === 0) throw new Error("Division by zero");
-        ops[i - 1].value = prev / current;
-      }
-
-      ops.splice(i, 1);
-      i--;
-    }
-  }
-
-  let result = ops[0].value;
-  for (let i = 1; i < ops.length; i++) {
-    if (ops[i].operator === "+") {
-      result += ops[i].value;
-    } else if (ops[i].operator === "-") {
-      result -= ops[i].value;
-    }
-  }
-
-  return result;
-};
+import { calculateOperations } from "./calculateOperations";
+import { calculateExpression } from "./calculateExpression";
 
 const createSyntheticEvent = (key: string): SyntheticButtonEvent => ({
   currentTarget: {
@@ -198,18 +166,9 @@ const equalsClickHandler = (
   if (!calc.sign && !calc.brackets.count) return;
 
   try {
-    const operations: Operation[] = [];
     if (!(calc && calc !== null)) return;
-
-    const numbers = calc!.expression!.match(/-?\d+(\.\d+)?/g)!.map(Number);
-    const operators = calc.expression.match(/[\+\-X\/]/g) || [];
-    operations.push({ operator: "+", value: numbers[0] });
-    for (let i = 0; i < operators.length; i++) {
-      operations.push({
-        operator: operators[i],
-        value: numbers[i + 1],
-      });
-    }
+    
+    const operations: Operation[] = calculateOperations(calc);
     const result = calculateExpression(operations);
     addToHistory({
       expression: `${calc.res} ${calc.sign} ${calc.num}`,
@@ -224,28 +183,11 @@ const equalsClickHandler = (
       res: result,
       expression: `${calc.expression} = ${result}`,
       brackets: { count: 0, expressions: [] },
+      equalsClicked: true,
     });
   } catch (err) {
+    console.log(err);
     throw new Error("Invalid calculation");
-  }
-};
-
-const calculateResult = (calc: CalcState): number => {
-  const num1 = parseFloat(removeSpaces(calc.res));
-  const num2 = parseFloat(removeSpaces(calc.num));
-
-  switch (calc.sign) {
-    case "+":
-      return num1 + num2;
-    case "-":
-      return num1 - num2;
-    case "X":
-      return num1 * num2;
-    case "/":
-      if (num2 === 0) throw new Error("Division by zero");
-      return num1 / num2;
-    default:
-      return num2;
   }
 };
 
@@ -255,27 +197,20 @@ const signClickHandler = (
   setCalc: React.Dispatch<React.SetStateAction<CalcState>>
 ) => {
   const value = e.currentTarget.innerHTML;
-  if (isOperator(calc.expression)) {
-    let newExpression = calc.expression.slice(0, -2);
-    console.log(newExpression);
-    setCalc({
-      ...calc,
-      expression: `${newExpression} ${value}`,
-      sign: value,
-      res: !calc.res && calc.num ? calc.num : calc.res,
-      num: 0,
-    });
-    return
-  }
+  let newExpression = calc.expression;
+  if (isOperator(calc.expression)) newExpression = calc.expression.slice(0, -2);
   setCalc({
     ...calc,
     sign: value,
     res: !calc.res && calc.num ? calc.num : calc.res,
     num: 0,
-    expression: `${calc.expression} ${value} `,
+    expression:
+      calc.res && calc.expression !== "" && calc.equalsClicked
+        ? `${calc.res} ${value}`
+        : `${newExpression} ${value}`,
+    equalsClicked: false,
   });
 };
-
 const handleError = (
   message: string,
   type: ErrorType,
@@ -317,26 +252,22 @@ export const closeBracketHandler = (
   setCalc: React.Dispatch<React.SetStateAction<CalcState>>
 ) => {
   if (calc.brackets.count === 0) return;
-
-  const result = calculateResult(calc);
   const updatedExpression = calc.expression + ")";
+
   setCalc({
     ...calc,
     brackets: {
       count: calc.brackets.count - 1,
       expressions: calc.brackets.expressions.slice(-1),
     },
-    num: result,
-    res: result,
     expression: updatedExpression,
   });
 };
 
 const isOperator = (value: string): boolean => {
-  const str = value.trimEnd()
+  const str = value.trimEnd();
   const operatorRegex = /[+\-X/]$/;
-  console.log(str)
-  return operatorRegex.test(str[str.length-1]);
+  return operatorRegex.test(str[str.length - 1]);
 };
 
 export {
@@ -348,6 +279,4 @@ export {
   percentClickHandler,
   equalsClickHandler,
   signClickHandler,
-  calculateResult,
-  calculateExpression,
 };

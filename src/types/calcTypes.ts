@@ -1,7 +1,8 @@
 import React from "react";
-export type CalculatorMode = 'basic' | 'engineering';
+export type CalculatorMode = "basic" | "engineering";
 export interface CalcState {
   mode: CalculatorMode;
+  equalsClicked: boolean;
   sign: string;
   num: number;
   res: number;
@@ -28,7 +29,7 @@ export interface SyntheticButtonEvent {
   };
   target: {
     innerHTML: string;
-  }
+  };
   preventDefault: () => void;
 }
 

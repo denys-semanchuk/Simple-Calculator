@@ -1,5 +1,5 @@
 
-import { calculateExpression } from "../src/utils/handlers";
+import { calculateExpression } from "../src/utils/calculateExpression";
 import { Operation } from "../src/types/calcTypes"; // Assuming you have types defined
 
 describe("calculateExpression", () => {

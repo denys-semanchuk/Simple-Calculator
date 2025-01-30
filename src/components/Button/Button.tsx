@@ -7,7 +7,7 @@ export interface ButtonProps {
   onClick: (e: any) => void;
 }
 
-const Button = ({ className, value, onClick}: ButtonProps) => {
+const Button = ({ className, value, onClick }: ButtonProps) => {
   return (
     <button className={className} onClick={onClick}>
       {value}

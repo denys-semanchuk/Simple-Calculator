@@ -1,4 +1,4 @@
-@import '../../index.css';
+@import "../../index.css";
 button {
   border: none;
   background-color: var(--button-primary);
@@ -21,4 +21,8 @@ button:hover {
 
 .equals:hover {
   background-color: rgb(228, 39, 15);
+}
+
+.equals.col4-8 {
+  grid-column: 4 / 8;
 }

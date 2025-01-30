@@ -23,11 +23,13 @@ const createSyntheticEvent = (key: string): SyntheticButtonEvent => ({
 });
 
 const backspaceHandler: CalcHandler = (calc, setCalc) => {
-  if (calc.num !== 0) {
+  if (calc.num !== 0 ) {
     const numStr = calc.num.toString();
     setCalc({
       ...calc,
       num: numStr.length === 1 ? 0 : Number(numStr.slice(0, -1)),
+      expression:
+        calc.expression.length === 1 ? "0" : calc.expression.slice(0, -1),
     });
   }
 };
@@ -167,7 +169,7 @@ const equalsClickHandler = (
 
   try {
     if (!(calc && calc !== null)) return;
-    
+
     const operations: Operation[] = calculateOperations(calc);
     const result = calculateExpression(operations);
     addToHistory({

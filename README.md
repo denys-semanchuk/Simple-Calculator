@@ -1,72 +1,55 @@
-# React Calculator with Dark Theme
+# React Calculator Pro
 
-A modern calculator application built with React and TypeScript, featuring dark/light theme support and error handling.
+A sophisticated calculator application built with React and TypeScript, featuring both basic and engineering modes. The app combines modern design principles with powerful calculation capabilities.
 
-## Features
+## ✨ Features
 
+### Core Functionality
 - Basic arithmetic operations (+, -, *, /)
-- Keyboard support
-- Dark/Light theme toggle
-- Error notifications
-- Responsive design
-- Backspace functionality
+- Engineering functions (sin, cos, tan, log, etc.)
+- Expression history tracking
+- Bracket support for complex calculations
+- Error handling and validation
 
-## Technologies
+### User Experience
+- Dual mode: Basic/Engineering calculator
+- Dark/Light theme with glass morphism design
+- Keyboard input support
+- Session state persistence
+- Responsive layout for all devices
 
-- React 18
-- TypeScript
-- CSS Modules
-- Context API for theme management
+### Technical Highlights
+- Built with React & TypeScript
+- Context API for state management
+- Local storage for session persistence
+- Custom hooks for theme and history
+- Modular component architecture
 
-## Installation
+## 🚀 Getting Started
 
-1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/react-calculator.git
-```
-
-2. Install dependencies:
-cd react-calculator
+# Install dependencies
 npm install
 
-3. Start the development server:
+# Start development server
 npm start
 
-
-## Usage
-
-### Calculator Operations
-- **Numbers (0-9)**: Input numbers
-- **Operators (+, -, *, /)**: Perform calculations
-- **C**: Clear calculator
-- **←**: Delete last digit
-- **=**: Calculate result
-- **.**: Add decimal point
-
-### Keyboard Support
-- **Numbers**: 0-9
-- **Operators**: +, -, *, /
-- **Enter**: Calculate (=)
-- **Escape**: Clear (C)
-- **Backspace**: Delete last digit
-
-### Theme Toggle
-Click the theme toggle button (🌙/☀️) in the top-right corner to switch between dark and light themes.
-
-### Error Handling
-The calculator handles various error cases:
-- Division by zero
-- Invalid operations
-- Maximum digit limit
-- Invalid input
-
-## Screenshots
-- Light Theme
-- Dark Theme
-
-## Contributing
-1. **Fork the repository**
-2. **Create your feature branch** (`git checkout -b feature/AmazingFeature`)
-3. **Commit your changes** (`git commit -m 'Add some AmazingFeature'`)
-4. **Push to the branch** (`git push origin feature/AmazingFeature`)
-5. **Open a Pull Request**
+# Build for production
+npm run build
+```
+## 🛠 Technology Stack
++ React 18
++ TypeScript
++ CSS Modules
++ Context API
++ Local Storage API
+## 📱 Supported Features
++ Arithmetic Operations
++ Trigonometric Functions
++ Logarithmic Calculations
++ Constants (π, e)
++ Power and Root Functions
++ Expression History
++ Theme Switching
++ Mode Toggle
++ Keyboard Support

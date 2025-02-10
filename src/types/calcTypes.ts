@@ -4,8 +4,8 @@ export interface CalcState {
   mode: CalculatorMode;
   equalsClicked: boolean;
   sign: string;
-  num: number;
-  res: number;
+  num: number | string;
+  res: number | string;
   expression: string;
   brackets: {
     count: number;

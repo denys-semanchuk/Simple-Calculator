@@ -5,7 +5,7 @@ export const trigonometricHandler = (
   calc: CalcState,
   setCalc: React.Dispatch<React.SetStateAction<CalcState>>
 ) => {
-  const value = calc.num || calc.res;
+  const value = Number(calc.num || calc.res);
   let result = 0;
 
   switch (operation) {
@@ -32,7 +32,7 @@ export const logarithmHandler = (
   calc: CalcState,
   setCalc: React.Dispatch<React.SetStateAction<CalcState>>
 ) => {
-  const value = calc.num || calc.res;
+  const value = Number(calc.num || calc.res);
   const result = operation === "log" ? Math.log10(value) : Math.log(value);
 
   setCalc({
@@ -48,7 +48,7 @@ export const angleUnitHandler = (
   calc: CalcState,
   setCalc: React.Dispatch<React.SetStateAction<CalcState>>
 ) => {
-  const value = calc.num || calc.res;
+  const value = Number(calc.num || calc.res);
   let result: number;
 
   if (operation === "rad") {
@@ -70,7 +70,7 @@ export const powerHandler = (
   calc: CalcState,
   setCalc: React.Dispatch<React.SetStateAction<CalcState>>
 ) => {
-  const base = calc.num || calc.res;
+  const base = Number(calc.num || calc.res);
   const result = Math.pow(base, exponent);
 
   let expression = "";
@@ -93,7 +93,7 @@ export const rootHandler = (
   calc: CalcState,
   setCalc: React.Dispatch<React.SetStateAction<CalcState>>
 ) => {
-  const value = calc.num || calc.res;
+  const value = Number(calc.num || calc.res);
 
   if (value < 0) {
     throw new Error("Cannot calculate square root of negative number");
@@ -131,14 +131,12 @@ export const factorialHandler = (
   calc: CalcState,
   setCalc: React.Dispatch<React.SetStateAction<CalcState>>
 ) => {
-  const value = calc.num || calc.res;
+  const value = Number(calc.num || calc.res);
 
-  // Input validation
   if (value < 0 || !Number.isInteger(value)) {
     throw new Error("Factorial only works with positive integers");
   }
 
-  // Calculate factorial
   const calculateFactorial = (n: number): number => {
     if (n === 0 || n === 1) return 1;
     return n * calculateFactorial(n - 1);

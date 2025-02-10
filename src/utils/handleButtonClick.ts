@@ -78,7 +78,7 @@ export const handleButtonClick = (
         break;
 
       case "^":
-        powerHandler(calc.num, calc, setCalc);
+        powerHandler(Number(calc.num), calc, setCalc);
         break;
 
       case "π":

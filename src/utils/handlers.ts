@@ -53,22 +53,6 @@ const numClickHandler = (
   }
 };
 
-const commaClickHandler = (
-  e: SyntheticButtonEvent,
-  calc: CalcState,
-  setCalc: React.Dispatch<React.SetStateAction<CalcState>>
-) => {
-  const element = e.target as HTMLButtonElement;
-  const value = element.innerHTML;
-
-  setCalc({
-    ...calc,
-    num: Number(
-      !calc.num.toString().includes(".") ? calc.num + value : calc.num
-    ),
-  });
-};
-
 const resetClickHandler = (
   calc: CalcState,
   setCalc: React.Dispatch<React.SetStateAction<CalcState>>
@@ -164,7 +148,7 @@ const handleKeyboard = (
 const equalsClickHandler = (
   calc: CalcState,
   setCalc: React.Dispatch<React.SetStateAction<CalcState>>,
-  addToHistory: (item: HistoryItem) => void,
+  addToHistory: (item: HistoryItem) => void
 ) => {
   if (!calc.sign && !calc.brackets.count) return;
 
@@ -274,13 +258,28 @@ const isOperator = (value: string): boolean => {
   return operatorRegex.test(str[str.length - 1]);
 };
 
+const commaClickHandler = (
+  e: SyntheticButtonEvent,
+  calc: CalcState,
+  setCalc: React.Dispatch<React.SetStateAction<CalcState>>
+) => {
+  const value = e.currentTarget.innerHTML;
+
+  if (!calc.num.toString().includes(".")) {
+    setCalc({
+      ...calc,
+      num: calc.num.toString() + ".",
+      expression: calc.expression + value,
+    });
+  }
+};
 export {
   backspaceHandler,
   numClickHandler,
-  commaClickHandler,
   resetClickHandler,
   handleKeyboard,
   percentClickHandler,
   equalsClickHandler,
   signClickHandler,
+  commaClickHandler,
 };

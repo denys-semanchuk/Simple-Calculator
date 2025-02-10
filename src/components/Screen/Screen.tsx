@@ -9,14 +9,14 @@ const Screen = ({ value, expression, brackets }: ScreenProps) => {
       </div>
       <div className="expression">{expression || '0'}</div>
       <div className="screen-value screen">
-        {value.toFixed(2)}
+        {typeof value === 'number' ? value.toFixed(2) : value}
       </div>
     </div>
   );
 };
 
 interface ScreenProps {
-  value: number;
+  value: number | string;
   brackets?: {
     count: number;
     expressions: Array<any>;
